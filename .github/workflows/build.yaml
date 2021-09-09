@@ -56,9 +56,9 @@ jobs:
         run: |
           if [[ ${GITHUB_REF} == 'refs/heads/master' ]];
           then
-            export FOLDER=master;
+            export FOLDER='master';
           else
-            export FOLDER=${GITHUB_REF}[-3:];
+            export FOLDER=${${GITHUB_REF}: -3};
           fi
       - name: Test variable
         run: echo $FOLDER
