@@ -20,6 +20,9 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
+      - name: Prints the current branch name
+        run: echo "${GITHUB_REF#refs/heads/}"
+
       - name: Install package dependencies
         run: sudo apt-get install mmv libssl-dev libcurl4-openssl-dev python-dev
 
