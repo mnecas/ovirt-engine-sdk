@@ -6,6 +6,7 @@ archs:
       distro: [el7, el8]
   - s390x:
       distro: fc30
+
 release_branches:
   master:
     - ovirt-master
