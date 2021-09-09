@@ -1,9 +1,7 @@
 
 name: ovirt-engine-sdk GitHub Actions
 
-on:
-  push:
-    branches: [ master ]
+on: push
 
 env:
   LD_LIBRARY_PATH: /usr/local/opt/curl/lib:$LD_LIBRARY_PATH
