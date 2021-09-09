@@ -52,22 +52,22 @@ jobs:
 
       - name: Create python documentation
         run: pdoc -t gh-pages -o ./html ovirtsdk4
+
       - name: Set FOLDER variable
         run: |
           if [[ ${GITHUB_REF} == 'refs/heads/master' ]];
           then
-            export FOLDER='master';
+            echo "FOLDER='master'" >> $GITHUB_ENV;
           else
-            export FOLDER=${GITHUB_REF: -3};
+            echo "FOLDER=${GITHUB_REF: -3}" >> $GITHUB_ENV;
           fi
-      - name: Test variable
-        run: echo $FOLDER
-      - name: Move created documentation to gh-pages master
+
+      - name: Move created documentation to gh-pages "${{env.FOLDER}}"
         run: |
           mmv './html/ovirtsdk4/*.html' './html/ovirtsdk4/#1.m.html'
-          mkdir -p ./html/master/
-          cp ./html/ovirtsdk4.html ./gh-pages/master/index.html
-          cp ./html/ovirtsdk4/* ./gh-pages/master/
+          mkdir -p ./html/${{env.FOLDER}}/
+          cp ./html/ovirtsdk4.html ./gh-pages/${{env.FOLDER}}/index.html
+          cp ./html/ovirtsdk4/* ./gh-pages/${{env.FOLDER}}/
           rm -rf ./html
 
       - name: Push changes to gh-pages
