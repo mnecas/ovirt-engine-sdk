@@ -20,6 +20,9 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
+      - name: Update packages
+        run: sudo apt-get update
+
       - name: Install package dependencies
         run: sudo apt-get install mmv libssl-dev libcurl4-openssl-dev python-dev
 
@@ -53,19 +56,19 @@ jobs:
       - name: Create python documentation
         run: pdoc -t gh-pages -o ./html ovirtsdk4
 
-      - name: Set FOLDER variable
+      - name: Set FOLDER variable according to pushed branch
         run: |
           if [[ ${GITHUB_REF} == 'refs/heads/master' ]];
           then
-            echo "FOLDER='master'" >> $GITHUB_ENV;
+            echo "FOLDER=master" >> $GITHUB_ENV;
           else
             echo "FOLDER=${GITHUB_REF: -3}" >> $GITHUB_ENV;
           fi
 
-      - name: Move created documentation to gh-pages "${{env.FOLDER}}"
+      - name: Move created documentation to gh-pages
         run: |
           mmv './html/ovirtsdk4/*.html' './html/ovirtsdk4/#1.m.html'
-          mkdir -p ./html/${{env.FOLDER}}/
+          mkdir -p ./gh-pages/${{env.FOLDER}}/
           cp ./html/ovirtsdk4.html ./gh-pages/${{env.FOLDER}}/index.html
           cp ./html/ovirtsdk4/* ./gh-pages/${{env.FOLDER}}/
           rm -rf ./html
@@ -83,12 +86,22 @@ jobs:
           fi
           cd ..
 
+      - name: Set FOLDER variable according to pushed branch
+        run: |
+          if [[ ${GITHUB_REF} == 'refs/heads/master' ]];
+          then
+            echo "REMOTE_BRANCH=main" >> $GITHUB_ENV;
+          else
+            echo "REMOTE_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV;
+          fi
+
       - name: Check out target repository
         uses: actions/checkout@v2
         with:
           repository: '${{ secrets.TARGET_REPO }}'
           ssh-key: '${{ secrets.DEPLOY_KEY }}'
           path: python-ovirt-engine-sdk4
+          ref: '${{ env.REMOTE_BRANCH }}'
 
       - name: Copy SDK to repository
         run: |
